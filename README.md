@@ -14,6 +14,7 @@ This is a Node.js simple application and the
 Created a nodejs-demo-app repo in GitHub and added two sample files,
 server.js
 ----------
+~~~
 const express = require('express');
 const app = express();
 const PORT = 3000;
@@ -23,9 +24,10 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-
+~~~
 package.json
 =============
+~~~
 {
   "name": "nodejs-demo-app",
   "version": "1.0.0",
@@ -38,7 +40,7 @@ package.json
     "express": "^4.18.2"
   }
 }
-
+~~~
 Now, create an EC2 instance and launch it using the Mobaxterm agent to log in to the server using the Public IP and keypair
 Install Docker in it 
 sudo apt update && sudo apt install -y docker.io
