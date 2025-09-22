@@ -49,7 +49,7 @@ Copy your private key into the ~/.ssh/authorized_keys file using the vi command,
 Now go to the GitHub repo and create a Dockerfile
 Dockerfile
 =============
-
+~~~
 FROM node:18
 
 WORKDIR /usr/src/app
@@ -62,7 +62,7 @@ COPY . .
 EXPOSE 3000
 
 CMD ["node", "server.js"]
-
+~~~
 Now go to GitHub settings ==> Secrets and Variables ==> Actions ==> New repository secret
 Add your Docker username and password, server public IP, server user, and sand sh-key in key and name format
 
