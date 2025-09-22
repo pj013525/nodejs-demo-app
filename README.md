@@ -113,5 +113,6 @@ Runs the new container on port 3000.
 After the pipeline was successful, take the public IP of the instance and paste it in the browser as
 http://3.94.198.161:3000/
 
-![CI/CD Node.js App Screenshot](assets/chrome_FDNHkUt5Zy.png)
+[![CI/CD Node.js App Screenshot](chrome_FDNHkUt5Zy.png)](chrome_FDNHkUt5Zy.png)
+
 
