@@ -1,0 +1,70 @@
+name: Full CI/CD Pipeline - Node.js App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Step 3: Install Dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 4: Run Tests
+      - name: Run Tests
+        run: npm test
+
+      # Step 5: DockerHub Login
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 6: Build Docker Image
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/nodejs-demo-app:latest .
+
+      # Step 7: Security Scan with Trivy
+      - name: Scan Docker Image with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/nodejs-demo-app:latest
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+
+      # Step 8: Push Docker Image
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/nodejs-demo-app:latest
+
+      # Step 9: Deploy on Own Server (via SSH)
+      - name: Deploy to Own Server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo " Pulling latest Docker image..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-demo-app:latest
+
+            echo " Stopping old container (if running)..."
+            docker stop nodejs-demo-app || true
+            docker rm nodejs-demo-app || true
+
+            echo " Starting new container..."
+            docker run -d --name nodejs-demo-app -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/nodejs-demo-app:latest
